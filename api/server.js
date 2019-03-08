@@ -21,4 +21,26 @@ server.get("/games", async (req, res) => {
   }
 });
 
+server.post("/games", async (req, res) => {
+  const { title, genre, releaseYear } = req.body;
+  if (!title || !genre || !releaseYear)
+    return res
+      .status(422)
+      .json({ error: "You must provide a valid game's properties." });
+
+  const foundGame = await Games.getOne({ title });
+  if (foundGame) {
+    return res
+      .status(405)
+      .json({ error: "A game with that title already exists." });
+  }
+
+  try {
+    const newGame = await Games.create(req.body);
+    res.status(201).json(newGame);
+  } catch (error) {
+    res.status(500).json({ error: "Internal error." });
+  }
+});
+
 module.exports = server;

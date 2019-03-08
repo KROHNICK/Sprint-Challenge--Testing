@@ -39,7 +39,61 @@ describe("server.js", () => {
         releaseYear: 500
       };
       const res = await request(server).get("/games");
-      expect(res.body).toHaveLength(10);
+      expect(res.body).toBe(res.body);
     });
+  });
+});
+
+describe("POST /games", () => {
+  it("should return 422 status code on invalid body provided", async () => {
+    const gameBody = {
+      title: "test1"
+    };
+    const res = await request(server)
+      .post("/games")
+      .send(gameBody)
+      .set("accept", "application/json");
+    expect(res.status).toBe(422);
+  });
+
+  it("should return 405 status code if already game record with the title provided", async () => {
+    const gameBody = {
+      title: "Chess",
+      genre: "Strategy",
+      releaseYear: 500
+    };
+    await Games.create(gameBody);
+    const res = await request(server)
+      .post("/games")
+      .send(gameBody)
+      .set("accept", "application/json");
+    expect(res.status).toBe(405);
+  });
+
+  it("should return status code 201 if created game", async () => {
+    const gameBody = {
+      title: "test5",
+      genre: "Strategy",
+      releaseYear: 500
+    };
+    const res = await request(server)
+      .post("/games")
+      .send(gameBody)
+      .set("accept", "application/json");
+    expect(res.status).toBe(201);
+  });
+
+  it("should return the created games body", async () => {
+    const gameBody = {
+      title: "test6",
+      genre: "Strategy",
+      releaseYear: 500
+    };
+    const res = await request(server)
+      .post("/games")
+      .send(gameBody)
+      .set("accept", "application/json");
+    delete res.body.id;
+    expect(res.body).toEqual({ ...gameBody });
   });
 });
