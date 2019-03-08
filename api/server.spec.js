@@ -56,6 +56,33 @@ describe("POST /games", () => {
     expect(res.status).toBe(422);
   });
 
+  it("should return status code 201 if created game", async () => {
+    const gameBody = {
+      title: "test10",
+      genre: "Strategy",
+      releaseYear: 500
+    };
+    const res = await request(server)
+      .post("/games")
+      .send(gameBody)
+      .set("accept", "application/json");
+    expect(res.status).toBe(201);
+  });
+
+  it("should return the created games body", async () => {
+    const gameBody = {
+      title: "test11",
+      genre: "Strategy",
+      releaseYear: 500
+    };
+    const res = await request(server)
+      .post("/games")
+      .send(gameBody)
+      .set("accept", "application/json");
+    delete res.body.id;
+    expect(res.body).toEqual({ ...gameBody });
+  });
+
   //   it("should return 405 status code if already game record with the title provided", async () => {
   //     const gameBody = {
   //       title: "Chess",
@@ -69,31 +96,4 @@ describe("POST /games", () => {
   //       .set("accept", "application/json");
   //     expect(res.status).toBe(405);
   //   });
-
-  it("should return status code 201 if created game", async () => {
-    const gameBody = {
-      title: "test7",
-      genre: "Strategy",
-      releaseYear: 500
-    };
-    const res = await request(server)
-      .post("/games")
-      .send(gameBody)
-      .set("accept", "application/json");
-    expect(res.status).toBe(201);
-  });
-
-  it("should return the created games body", async () => {
-    const gameBody = {
-      title: "test8",
-      genre: "Strategy",
-      releaseYear: 500
-    };
-    const res = await request(server)
-      .post("/games")
-      .send(gameBody)
-      .set("accept", "application/json");
-    delete res.body.id;
-    expect(res.body).toEqual({ ...gameBody });
-  });
 });
