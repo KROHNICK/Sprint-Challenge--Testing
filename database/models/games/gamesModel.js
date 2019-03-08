@@ -1,51 +1,36 @@
 const db = require("../../db");
 
-const insert = async games => {
-  const [id] = await db("games").insert(game, "id");
-  const newCohort = await db("games")
+const create = async newGame => {
+  const [id] = await db("games").insert(newGame, "id");
+  const createdGame = await db("games")
     .where({ id })
     .first();
-  return newGame;
+  return createdGame;
 };
 
-const getAll = async filter => {
-  let games = [];
-  if (filter) {
-    games = await db("games").where(filter);
-  } else {
-    games = await db("games");
-  }
-  return games;
+const getAll = async () => {
+  const allGames = await db("games");
+  return allGames;
 };
 
 const getOne = async filter => {
-  const game = await db("games")
+  const foundGame = await db("games")
     .where(filter)
     .first();
-  return game;
+  if (!foundGame) return null;
+  return foundGame;
 };
 
-const update = async (id, props) => {
-  const update = await db("games")
-    .where({ id })
-    .update(props, "id");
-  const updatedGame = await db("games")
-    .where({ id })
-    .first();
-  return updatedGames;
-};
-
-const deleteById = async id => {
-  const deleted = await db("games")
-    .where({ id })
+const deleteOne = async filter => {
+  const deleteGame = await db("games")
+    .where(filter)
     .del();
-  return deleted;
+  return deleteGame;
 };
 
 module.exports = {
-  insert,
+  create,
   getAll,
   getOne,
-  update,
-  deleteById
+  deleteOne
 };
